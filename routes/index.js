@@ -13,7 +13,7 @@ module.exports = () => {
     });
 
     router.get('/home', (req, res) => {
-        if (req.session.admin) {
+        if (req.session.admin != undefined) {
             if(req.session.admin.role === Type.ROOT){
                 getAll().then((all_employees) => {
                     getAllUsers().then((all_users) =>{
