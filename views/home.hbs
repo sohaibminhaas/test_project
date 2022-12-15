@@ -1,0 +1,120 @@
+<section>
+    {{> header}}
+</section>
+{{#condition session.role 'ROOT'}}
+    <div class="container main-content">
+        <h2 class="small-heading"><b>All Employees</b></h2>
+        <div class="table-style">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#if employees }}
+                        {{#each employees}}
+                            <tr>
+                                <td class="s-no">{{this.first_name}} {{this.last_name}}</td>
+                                <td class="s-no">{{this.email}}</td>
+                                <td class="s-no">{{this.phone_number}}</td>
+                                <td class="s-no">{{this.status}}</td>
+                                <td class="s-no">
+                                    <a href="/employee/{{this.id}}">Edit</a>
+                                    {{#condition ../session.role 'ROOT'}}
+                                        <a href="#" onclick="deleteEmployee({{this.id}})">Delete</a>
+                                    {{/condition}}
+                                </td>
+                            </tr>
+                        {{/each}}
+                    {{else}}
+                        <tr>
+                            <td colspan="5">No Data Found</td>
+                        </tr>
+                    {{/if}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{{/condition}}
+<div class="container main-content">
+    <h2 class="small-heading"><b>All Users</b></h2>
+    <div class="table-style">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#if all_users }}
+                    {{#each all_users}}
+                        <tr>
+                            <td class="s-no">{{this.first_name}} {{this.last_name}}</td>
+                            <td class="s-no">{{this.email}}</td>
+                            <td class="s-no">{{this.phone_number}}</td>
+                            <td class="s-no">{{this.status}}</td>
+                            <td class="s-no">
+                                <a href="/user/{{this.id}}">Edit</a>
+                                {{#condition ../session.role 'ROOT'}}
+                                    <a href="#" onclick="deleteUser({{this.id}})">Delete</a>
+                                {{/condition}}
+                            </td>
+                        </tr>
+                    {{/each}}
+                {{else}}
+                    <tr>
+                        <td colspan="5">No Data Found</td>
+                    </tr>
+                {{/if}}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(document).ready( function () {
+        $('.table').DataTable();
+    });
+
+    function deleteUser(id){
+        deleteRecord(id, "USER")
+    }
+
+    function deleteEmployee(id){
+       deleteRecord(id, "EMPLOYEE")
+    }
+
+    function deleteRecord(id, type){
+        $.ajax({
+            url: "/delete/user",
+            method: 'post',
+            data: {
+                id: id,
+                type: type
+            },
+            success: function (result) {
+                $('.loader').hide();
+                if(result.status){
+                    alert(`${type} Deleted Successfully`);
+                    location.reload()
+                }else{
+                    alert(`Error in Deleting ${type} ! Please Try Again`);
+                }
+            },
+            error: function (error){
+                $('.loader').hide();
+                console.log("error: ", error)
+                alert("Something Went Wrong! Please Try Again");
+            }
+        });
+    }
+    
+</script>

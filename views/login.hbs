@@ -1,0 +1,44 @@
+<div class="container center">
+    <img src="../loader.gif" class="loader" style="display:none;">
+    <section class="inner-layout">
+        <h2>Login</h2>
+        <form action="" method="post">
+            <div class="container">
+                <label for="uname"><b>Email</b></label>
+                <input type="text" placeholder="Enter email or phone" name="uname" required>
+                <label for="psw"><b>Password</b></label>
+                <input type="password" placeholder="Enter password" name="psw" required>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<script>
+    $("form").submit(function (event) {
+        $('.loader').show();
+        var data = $('form').serializeArray();
+        $.ajax({
+            url: "/login",
+            method: 'post',
+            data: {
+                "user_name": data[0].value,
+                "password": data[1].value
+            },
+            success: function (result) {
+                $('.loader').hide();
+                if(result.status){
+                    window.location.href = "/home";
+                }else{
+                    alert("Invalid Email/Password");
+                }
+            },
+            error: function (error){
+                $('.loader').hide();
+                console.log("error: ", error)
+                alert("Invalid Email/Password");
+            }
+        });
+        event.preventDefault();
+    });
+</script>

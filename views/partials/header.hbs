@@ -1,0 +1,39 @@
+<header>
+    <div class="class header-class">
+        <div class="column-1">
+            <h3><a href="/home" style="text-decoration: none; color: white">Home</a></h3>
+        </div>
+        <div class="column-2">
+            <div class="company-info">
+                <h3>Test Project</h3>
+                <h5> Welcome {{session.first_name}} {{session.last_name}} </h5>
+            </div>
+        </div>
+        <div class="column-3">
+            {{#condition session.role 'ROOT'}}
+                <div class="action-buttons ms-auto">
+                    <a href="/employee">
+                        Create Employee
+                    </a>
+                </div>
+                <div class="action-buttons ms-auto">
+                    <a href="/user">
+                        Create User
+                    </a>
+                </div>
+            {{/condition}}
+            {{#condition session.role 'EMPLOYEE'}}
+                <div class="action-buttons ms-auto">
+                    <a href="/user">
+                        Create Employee
+                    </a>
+                </div>
+            {{/condition}}
+            <div class="action-buttons ms-auto">
+                <a href="/logout">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</header>

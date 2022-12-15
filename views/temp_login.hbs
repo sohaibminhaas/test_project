@@ -1,0 +1,40 @@
+<div class="container center">
+    <img src="../loader.gif" class="loader" style="display:none;">
+    <section class="inner-layout">
+        <h2>Login</h2>
+        <form action="" method="post">
+            <div class="container">
+                <label for="uname"><b>Please Enter your 6 digit code to reset your password</b></label>
+                <input type="hidden" name="temp_id", value="{{temp_id}}">
+                <input type="number" placeholder="Enter Code" name="code" required>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<script>
+    $("form").submit(function (event) {
+        $('.loader').show();
+        var data = $('form').serializeArray();
+        $.ajax({
+            url: "/temp/login",
+            method: 'post',
+            data: data,
+            success: function (result) {
+                $('.loader').hide();
+                if(result.status){
+                    window.location.href = `/password/reset?temp_id=${result.data.id}&code=${result.data.code}`;
+                }else{
+                    alert("Invalid Code! Please Try Again");
+                }
+            },
+            error: function (error){
+                $('.loader').hide();
+                console.log("error: ", error)
+                alert("Something Went Wrong! Please Try Again");
+            }
+        });
+        event.preventDefault();
+    });
+</script>

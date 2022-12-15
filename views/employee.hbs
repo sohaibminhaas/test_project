@@ -1,0 +1,111 @@
+<section>
+    {{> header}}
+    <div class="main-content">
+        <img src="../loader.gif" class="loader" style="display:none;">
+        <div class="container center">
+            <section class="inner-layout">
+                <h2>Create Employee</h2>
+                <form action="" method="post">
+                    <input type="hidden" name="id" value="{{employee.id}}">
+                    <div class="legend__styled">
+                        <label for="first_name"><b>First Name</b></label>
+                        <input type="text" placeholder="Enter First Name" name="first_name" value="{{employee.first_name}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="last_name"><b>Last Name</b></label>
+                        <input type="text" placeholder="Enter Last Name" name="last_name" value="{{employee.last_name}}" required>
+                    </div>
+                     <div class="legend__styled">
+                        <label for="email"><b>Email</b></label>
+                        <input type="email" placeholder="Enter Email" name="email" value="{{employee.email}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="phone_number"><b>Phone Number</b></label>
+                        <input type="text" placeholder="Enter Phone Number" name="phone_number" value="{{employee.phone_number}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="gender"><b>Gender</b></label>
+                        <select name="gender" id="gender" required>
+                            <option value="male" {{#condition employee.gender 'MALE'}} selected {{/condition}}>Male</option>
+                            <option value="female" {{#condition employee.gender 'FEMALE'}} selected {{/condition}}>Female</option>
+                        </select>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="id__type"><b>ID Type</b></label>
+                        <select name="id__type" id="id__type" required>
+                            <option value="idcard" {{#condition employee.identity_type 'ID_CARD'}} selected {{/condition}}>ID Card</option>
+                            <option value="passport" {{#condition employee.identity_type 'PASSPORT'}} selected {{/condition}}>Passport</option>
+                        </select>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="id_number"><b>Id/Passport Number</b></label>
+                        <input type="text" placeholder="Enter Number" name="id_number" value="{{employee.identity_number}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="street"><b>Street</b></label>
+                        <input type="text" placeholder="Enter Street Address" name="street" value="{{employee.employee_addresses.0.street_no}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="house_no"><b>Flor/House#</b></label>
+                        <input type="text" placeholder="Enter Flor/House #" name="house_no" value="{{employee.employee_addresses.0.house_no}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="image" style="margin: 0 0 -10px 20px;"><b>Picture</b></label>
+                        <input type="file" placeholder="Select Picture" name="image" value="">
+                    </div>
+                    <div style="margin-right: 100px; margin-left: 100px;">
+                        <input type="submit" class="button" value="{{#if isEdit}} Update {{else}} Save {{/if}}">
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</section>
+<script>
+    $("form").submit(function (event) {
+        const isEdit = {{{isEdit}}}
+        $('.loader').show();
+        var data = $('form').serializeArray();
+        if(isEdit){
+            $.ajax({
+                url: "/employee",
+                method: 'put',
+                data: data,
+                success: function (result) {
+                    $('.loader').hide();
+                    if(result.status){
+                        window.location.href = "/home";
+                    }else{
+                        alert("Invalid Email/Password");
+                    }
+                },
+                error: function (error){
+                    $('.loader').hide();
+                    console.log("error: ", error)
+                    alert("Invalid Email/Password");
+                }
+            });
+        }
+        else{
+            $.ajax({
+                url: "/employee",
+                method: 'post',
+                data: data,
+                success: function (result) {
+                    $('.loader').hide();
+                    if(result.status){
+                        window.location.href = "/home";
+                    }else{
+                         alert("Error in Creating New Employee! Please Try Again");
+                    }
+                },
+                error: function (error){
+                    $('.loader').hide();
+                    console.log("error: ", error)
+                    alert("Something Went Wrong! Please Try Again");
+                }
+            });
+        }
+        event.preventDefault();
+    });
+</script>

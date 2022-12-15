@@ -1,0 +1,140 @@
+<section>
+    {{> header}}
+    <div class="main-content">
+        <img src="../loader.gif" class="loader" style="display:none;">
+        <div class="container center">
+            <section class="inner-layout">
+                <h2>Create User</h2>
+                <form action="" method="post">
+                    <input type="hidden" name="id" value="{{user.id}}">
+                    <div class="legend__styled">
+                        <label for="first_name"><b>First Name</b></label>
+                        <input type="text" placeholder="Enter First Name" name="first_name" value="{{user.first_name}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="last_name"><b>Last Name</b></label>
+                        <input type="text" placeholder="Enter Last Name" name="last_name" value="{{user.last_name}}" required>
+                    </div>
+                     <div class="legend__styled">
+                        <label for="email"><b>Email</b></label>
+                        <input type="email" placeholder="Enter Email" name="email" value="{{user.email}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="phone_number"><b>Phone Number</b></label>
+                        <input type="text" placeholder="Enter Phone Number" name="phone_number" value="{{user.phone_number}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="date_of_birth" style="margin: 0 0 -10px 20px;"><b>Date Of Birth</b></label>
+                        <input type="date" placeholder="Select Date Of Birth" name="date_of_birth" value="{{getDate user.date_of_birth}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="gender"><b>Gender</b></label>
+                        <select name="gender" id="gender" required>
+                            <option value="male" {{#condition user.gender 'MALE'}} selected {{/condition}}>Male</option>
+                            <option value="female" {{#condition user.gender 'FEMALE'}} selected {{/condition}}>Female</option>
+                        </select>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="id__type"><b>ID Type</b></label>
+                        <select name="id__type" id="id__type" required>
+                            <option value="idcard" {{#condition user.identity_type 'ID_CARD'}} selected {{/condition}}>ID Card</option>
+                            <option value="passport" {{#condition user.identity_type 'PASSPORT'}} selected {{/condition}}>Passport</option>
+                        </select>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="id_number"><b>Id/Passport Number</b></label>
+                        <input type="text" placeholder="Enter Number" name="id_number" value="{{user.identity_number}}" required>
+                    </div>
+                    <div class="addresses"><span>Home Address</span></div>
+                    <input type="hidden" name="home_address_id" value="{{user.user_addresses.0.id}}">
+                    <div class="legend__styled">
+                        <label for="street"><b>Street</b></label>
+                        <input type="text" placeholder="Enter Street Address" name="street" value="{{user.user_addresses.0.street_no}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="house_no"><b>Flor/House#</b></label>
+                        <input type="text" placeholder="Enter Flor/House #" name="house_no" value="{{user.user_addresses.0.house_no}}" required>
+                    </div>
+                    <div class="addresses"><span>Work Address</span></div>
+                    <input type="hidden" name="work_address_id" value="{{user.user_addresses.1.id}}">
+                    <div class="legend__styled">
+                        <label for="street"><b>Street</b></label>
+                        <input type="text" placeholder="Enter Street Address" name="work_street" value="{{user.user_addresses.1.street_no}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="work_house_no"><b>Flor/House #</b></label>
+                        <input type="text" placeholder="Enter Flor/House #" name="work_house_no" value="{{user.user_addresses.1.house_no}}" required>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="speciality" style="margin: 0 0 -15px 20px;">Speciality</label>
+                        <select name="speciality" id="speciality" multiple required>
+                            {{#each skills}}
+                                <option value="{{this.id}}" {{#IsSelected this.id ../user.user_skills}} selected {{/IsSelected}}>{{this.title}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="legend__styled">
+                        <label for="image" style="margin: 0 0 -10px 20px;"><b>Picture</b></label>
+                        <input type="file" placeholder="Select Picture" name="image" value="">
+                    </div>
+                    <div style="margin-right: 100px; margin-left: 100px;">
+                        <input type="submit" class="button" value="{{#if isEdit}} Update {{else}} Save {{/if}}">
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</section>
+<script>
+    $(document).ready(function(){
+        $('#speciality').multiselect();
+    });
+    $("form").submit(function (event) {
+        debugger
+        const isEdit = {{{isEdit}}}
+        $('.loader').show();
+        var data = $('form').serializeArray();
+        console.log("data:", data)
+        if(isEdit){
+            $.ajax({
+                url: "/user",
+                method: 'put',
+                data: data,
+                success: function (result) {
+                    $('.loader').hide();
+                    if(result.status){
+                        window.location.href = "/home";
+                    }else{
+                        alert("Invalid Email/Password");
+                    }
+                },
+                error: function (error){
+                    $('.loader').hide();
+                    console.log("error: ", error)
+                    alert("Invalid Email/Password");
+                }
+            });
+        }
+        else{
+            $.ajax({
+                url: "/user",
+                method: 'post',
+                data: data,
+                success: function (result) {
+                    $('.loader').hide();
+                    if(result.status){
+                        window.location.href = "/home";
+                    }else{
+                        alert("Error in Creating New User! Please Try Again");
+                    }
+                },
+                error: function (error){
+                    $('.loader').hide();
+                    console.log("error: ", error)
+                    alert("Something Went Wrong! Please Try Again");
+                }
+            });
+        }
+        event.preventDefault();
+    });
+</script>

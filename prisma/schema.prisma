@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Users {
+  id                  Int @id @default(autoincrement())
+  first_name          String
+  last_name           String
+  email               String
+  phone_number        String
+  gender              Gender
+  identity_type       ID_Type
+  identity_number     String
+  img                 String
+  resume              String
+  status              Status
+  is_validated        Boolean @default(false)
+  createdAt           DateTime
+  updatedAt           DateTime?     @updatedAt
+  createdById         Int
+  createdByType       Type
+  date_of_birth       DateTime?     @db.Date()    
+  user_addresses      UserAddresses[]
+  user_skills         UserSkills[]
+}
+
+model UserSkills {
+  id                  Int @id @default(autoincrement())
+  user_id             Int
+  skill_id            Int
+  user                Users @relation(fields: [user_id], references: [id])
+  skill               Skills @relation(fields: [skill_id], references: [id])
+  @@index([user_id])
+  @@index([skill_id])
+}
+
+model Skills {
+  id                  Int @id @default(autoincrement())
+  title               String
+  status              Status
+  skill               UserSkills[]
+}
+
+model UserAddresses {
+  id                  Int @id @default(autoincrement())
+  street_no           String
+  house_no            String
+  user_id             Int
+  user                Users   @relation(fields: [user_id], references: [id])
+  @@index([user_id])
+}
+
+model Employees {
+  id                  Int @id @default(autoincrement())
+  first_name          String
+  last_name           String
+  email               String
+  phone_number        String
+  gender              Gender
+  identity_type       ID_Type
+  identity_number     String
+  img                 String
+  status              Status
+  createdAt           DateTime
+  updatedAt           DateTime?     @updatedAt 
+  employee_addresses  EmployeeAddresses[]
+}
+
+model EmployeeAddresses {
+  id                  Int @id @default(autoincrement())
+  street_no           String
+  house_no            String
+  employee_id         Int
+  employee            Employees   @relation(fields: [employee_id], references: [id])
+  @@index([employee_id])
+}
+
+model Admins {
+  id                  Int @id @default(autoincrement())
+  first_name          String
+  last_name           String
+  email               String
+  password            String
+  phone_number        String
+  role                Type
+  createdAt           DateTime
+  updatedAt           DateTime?     @updatedAt 
+  status              Status?
+}
+
+model TempSignIn {
+  id                  Int @id @default(autoincrement())
+  type                Type
+  type_id             Int
+  code                Int
+  is_validated        Boolean @default(false)
+  createdAt           DateTime
+  updatedAt           DateTime?     @updatedAt
+}
+
+enum Type {
+  ROOT
+  EMPLOYEE
+  USER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum ID_Type {
+  ID_CARD
+  PASSPORT
+}
+
+enum Status {
+  ACTIVE
+  DELETED
+  PENDING
+}
+
+enum AddresseType {
+  HOME
+  WORK
+}
