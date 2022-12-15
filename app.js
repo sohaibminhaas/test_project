@@ -8,21 +8,7 @@ const handlebars = require('handlebars');
 const bodyparser = require("body-parser");
 const { engine } = require('express-handlebars');
 const session = require("express-session");
-app.use(
-    bodyparser.urlencoded({
-        extended: true,
-    })
-);
-app.enable('trust proxy');
-app.use(bodyparser.json());
-app.set('views', path.join(`${__dirname}/views/`))
-app.engine('hbs', engine({
-    extname: "hbs",
-    defaultLayout: "index",
-    layoutsDir: `${__dirname}/views/layouts/`,
-    partialsDir: `${__dirname}/views/partials/`,
-}))
-app.set("view engine", "hbs");
+
 app.use(
     session({
         name: "codeil",
@@ -38,6 +24,23 @@ app.use(
         }
     })
 );
+
+app.use(
+    bodyparser.urlencoded({
+        extended: true,
+    })
+);
+app.enable('trust proxy');
+app.use(bodyparser.json());
+app.set('views', path.join(`${__dirname}/views/`))
+app.engine('hbs', engine({
+    extname: "hbs",
+    defaultLayout: "index",
+    layoutsDir: `${__dirname}/views/layouts/`,
+    partialsDir: `${__dirname}/views/partials/`,
+}))
+app.set("view engine", "hbs");
+
 app.use(express.static(__dirname + "/public"));
 const port = process.env.PORT ?? 3000;
 app.use('/', routes());
