@@ -26,7 +26,7 @@ app.use(
     session({
         name: "codeil",
         secret: "test_project",
-        resave: false,
+        resave: true,
         saveUninitialized: true,
     })
 );
