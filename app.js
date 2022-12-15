@@ -32,7 +32,7 @@ app.use(
         proxy: true,
         cookie: {
             secure: true,
-            httpOnly: false,
+            httpOnly: true,
             sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 48
         }
