@@ -28,6 +28,13 @@ app.use(
         secret: "test_project",
         resave: true,
         saveUninitialized: true,
+        proxy: true,
+        cookie: {
+            secure: true,
+            httpOnly: false,
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 48
+        }
     })
 );
 app.use(express.static(__dirname + "/public"));
@@ -45,14 +52,14 @@ handlebars.registerHelper("condition", function (v1, v2, options) {
 });
 
 handlebars.registerHelper("IsSelected", function (v1, v2, options) {
-    if(v2 && v2.find((skill) => skill.skill_id == v1)){
+    if (v2 && v2.find((skill) => skill.skill_id == v1)) {
         return options.fn(this);
     }
     return options.inverse(this);
 });
 
 handlebars.registerHelper("getDate", function (value, options) {
-    if(value){
+    if (value) {
         return new Date(value).toISOString().split('T')[0];
     }
     return new Date().toISOString().split('T')[0];
