@@ -24,7 +24,7 @@ app.engine('hbs', engine({
 app.set("view engine", "hbs");
 app.use(
     session({
-        name: "test_project",
+        name: "codeil",
         secret: "test_project",
         resave: false,
         saveUninitialized: true,
