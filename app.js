@@ -26,9 +26,8 @@ app.use(
     session({
         name: "codeil",
         secret: "test_project",
-        saveUninitialized:true,
-        cookie: { maxAge: oneDay },
-        resave: false 
+        resave: true,
+        saveUninitialized: true,
     })
 );
 app.use(express.static(__dirname + "/public"));
