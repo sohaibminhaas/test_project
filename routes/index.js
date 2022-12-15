@@ -12,30 +12,33 @@ module.exports = () => {
         res.render("login");
     });
 
-    router.get('/home', async (req, res) => {
+    router.get('/home', (req, res) => {
         if (req.session.admin) {
             if(req.session.admin.role === Type.ROOT){
-                const all_employees = await getAll();
-                const all_users = await getAllUsers();
-                res.render("home", {
-                    session: req.session.admin,
-                    employees: all_employees ?? [],
-                    all_users: all_users ?? []
+                getAll().then((all_employees) => {
+                    getAllUsers().then((all_users) =>{
+                        res.render("home", {
+                            session: req.session.admin,
+                            employees: all_employees ?? [],
+                            all_users: all_users ?? []
+                        });
+                    });
                 });
             }else if(req.session.admin.role === Type.EMPLOYEE){
-                const all_users = await getUsersById(req.session.admin.id);
-                res.render("home", {
-                    session: req.session.admin,
-                    all_users: all_users ?? []
+                getUsersById(req.session.admin.id).then((all_users) =>{
+                    res.render("home", {
+                        session: req.session.admin,
+                        all_users: all_users ?? []
+                    });
                 });
             }
             else if(req.session.admin.role === Type.USER){
-                const all_users = await getUserByEmail(req.session.admin.email);
-                console.log("all_users", all_users)
-                res.render("home", {
-                    session: req.session.admin,
-                    all_users: [all_users] ?? []
-                });
+                getUserByEmail(req.session.admin.email).then((all_users) => {
+                    res.render("home", {
+                        session: req.session.admin,
+                        all_users: [all_users] ?? []
+                    });
+                })
             }
         } else {
             res.redirect('/');
