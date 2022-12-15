@@ -13,6 +13,7 @@ app.use(
         extended: true,
     })
 );
+app.enable('trust proxy');
 app.use(bodyparser.json());
 app.set('views', path.join(`${__dirname}/views/`))
 app.engine('hbs', engine({
