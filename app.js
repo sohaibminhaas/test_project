@@ -13,15 +13,9 @@ app.use(
     session({
         name: "codeil",
         secret: "test_project",
-        resave: true,
+        resave: false,
         saveUninitialized: true,
         proxy: true,
-        cookie: {
-            secure: true,
-            httpOnly: true,
-            sameSite: 'none',
-            maxAge: 1000 * 60 * 60 * 48
-        }
     })
 );
 
