@@ -8,14 +8,29 @@ const handlebars = require('handlebars');
 const bodyparser = require("body-parser");
 const { engine } = require('express-handlebars');
 const session = require("express-session");
+const RedisStore = require("connect-redis")(session);
+const Redis = require("ioredis");
+
+const redisClient = new Redis({
+    port: process.env.REDIS_PORT, // Redis port
+    host: process.env.REDIS_URL, // Redis host
+    password: process.env.REDIS_PASSWORD,
+    tls: { servername: process.env.REDIS_URL },
+});
+const REDIS_PREFIX = process.env.REDIS_PREFIX
+    ? process.env.REDIS_PREFIX.concat("-session:")
+    : "unknown".concat("-session:");
 
 app.use(
     session({
+        name: "test_project",
         secret: "test_project",
-        cookie: {
-            secure: false,
-            maxAge: 24 * 60 * 60 * 1000 // One day
-        },
+        resave: false,
+        saveUninitialized: true,
+        store: new RedisStore({
+            client: redisClient,
+            prefix: REDIS_PREFIX,
+        }),
     })
 );
 
