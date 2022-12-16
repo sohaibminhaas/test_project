@@ -16,7 +16,7 @@ async function create(data) {
                         gender: data.gender === 'male' ? Gender.MALE : Gender.FEMALE,
                         identity_type: data.id_type === "idcard" ? ID_Type.ID_CARD : ID_Type.PASSPORT,
                         identity_number: data.id_number,
-                        img: "test.png",
+                        img: data.imageName,
                         createdAt: new Date().toISOString(),
                         status: Status.PENDING
                     }
@@ -58,7 +58,7 @@ async function update(data) {
                         gender: data.gender === 'male' ? Gender.MALE : Gender.FEMALE,
                         identity_type: data.id_type === "idcard" ? ID_Type.ID_CARD : ID_Type.PASSPORT,
                         identity_number: data.id_number,
-                        img: "test.png",
+                        img: data.imageName,
                         updatedAt: new Date().toISOString(),
                         status: Status.PENDING
                     }

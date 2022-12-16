@@ -20,7 +20,8 @@ module.exports = () => {
             res.render("employee", {
                 session: req.session.admin,
                 employee: employee,
-                isEdit: true
+                isEdit: true,
+                baseURLImage: process.env.IMAGES_BLOB_BASEURL
             });
         } else {
             res.redirect('/');
@@ -61,7 +62,6 @@ module.exports = () => {
                 const data = Object.assign(req.body);
                 if (data) {
                     const employee_response = await update(data);
-                    console.log("employee_response: ", employee_response)
                     if (employee_response) {
                         return res.send({
                             status: true,

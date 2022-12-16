@@ -6,6 +6,7 @@ const { login, getTempSigninDetails, createAdmin, deleteFunction, SendWhatsAppOr
 const { getAll } = require("../services/employee")
 const { getAllUsers, getUsersById, getUserByEmail } = require("../services/user");
 const { Type } = require('@prisma/client');
+const { BlockBlobClient } = require('@azure/storage-blob');
 
 module.exports = () => {
     router.get('/', (req, res) => {
@@ -180,6 +181,43 @@ module.exports = () => {
                 data: undefined
             })
         } catch (error) {
+            return res.send({
+                status: false,
+                data: undefined
+            })
+        }
+    });
+
+    router.post('/convert/image', async (req, res) => {
+        try {
+            console.log("asdsadssadasd")
+            let file = req.files.file;
+            const blobName = new Date().getTime().toString();
+            console.log("blobName:", blobName)
+            const blobService = new BlockBlobClient(process.env.AZURE_CONN_STRING, "public/test-project", blobName)
+            blobService.uploadFile(file.tempFilePath)
+            .then(
+                (response) => {
+                    return res.json({
+                        clientRequestId: response.clientRequestId,
+                        statusCode: true,
+                        blobName: blobName,
+                        baseUrl: process.env.IMAGES_BLOB_BASEURL
+                    })
+                }
+            ).catch(
+                (err) => {
+                    if (err) {
+                        console.log("Error", err);
+                        return res.json({
+                            statusCode: false,
+                            err: err,
+                            blobName: blobName
+                        });
+                    }
+                })
+        } catch (error) {
+            console.log("error", error)
             return res.send({
                 status: false,
                 data: undefined

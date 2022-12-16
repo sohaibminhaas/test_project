@@ -10,6 +10,7 @@ const { engine } = require('express-handlebars');
 const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
 const Redis = require("ioredis");
+const fileUpload = require("express-fileupload");
 
 const redisClient = new Redis({
     port: process.env.REDIS_PORT, // Redis port
@@ -33,6 +34,13 @@ app.use(
         }),
     })
 );
+
+app.use(
+    fileUpload({
+      useTempFiles: true,
+      tempFileDir: "/tmp/",
+    })
+  );
 
 app.use(
     bodyparser.urlencoded({

@@ -25,7 +25,8 @@ module.exports = () => {
                 session: req.session.admin,
                 user: user,
                 isEdit: true,
-                skills: skills
+                skills: skills,
+                baseURLImage: process.env.IMAGES_BLOB_BASEURL
             });
         } else {
             res.redirect('/');

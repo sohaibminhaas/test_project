@@ -75,7 +75,9 @@
                     </div>
                     <div class="legend__styled">
                         <label for="image" style="margin: 0 0 -10px 20px;"><b>Picture</b></label>
-                        <input type="file" placeholder="Select Picture" name="image" value="">
+                        <input type="file" placeholder="Select Picture" name="image" id="image" value="">
+                        <input type="hidden" name="imageName" id="imageName" class="" value="{{user.img}}">
+                        <img src="{{baseURLImage}}{{user.img}}"alt="" id="profile_image" name="profile_image" class="img-fluid">
                     </div>
                     <div style="margin-right: 100px; margin-left: 100px;">
                         <input type="submit" class="button" value="{{#if isEdit}} Update {{else}} Save {{/if}}">
@@ -89,6 +91,33 @@
     $(document).ready(function(){
         $('#speciality').multiselect();
     });
+
+     $('#image').on({
+        'change': function () {
+            var myFile = $('#image').prop('files');
+            $('.loader').show();
+            var formData = new FormData();
+            formData.append('file', myFile[0]);
+            $.ajax({
+                url: "/convert/image",
+                method: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.statusCode) {
+                        $('#profile_image').attr('src', result.baseUrl + result.blobName);
+                        $('#imageName').val(result.blobName)
+                        $('.loader').hide();
+                    }
+                },
+                error: function (error) {
+                    console.log("error", error);
+                }
+            });
+        }
+    });
+
     $("form").submit(function (event) {
         debugger
         const isEdit = {{{isEdit}}}
