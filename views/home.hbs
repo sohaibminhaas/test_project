@@ -1,6 +1,7 @@
 <section>
     {{> header}}
 </section>
+<img src="../loader.gif" class="loader" style="display:none;">
 {{#condition session.role 'ROOT'}}
     <div class="container main-content">
         <h2 class="small-heading"><b>All Employees</b></h2>
@@ -24,10 +25,10 @@
                                 <td class="s-no">{{this.phone_number}}</td>
                                 <td class="s-no">{{this.status}}</td>
                                 <td class="s-no">
-                                    <a href="/employee/{{this.id}}">Edit</a>
-                                    {{#condition ../session.role 'ROOT'}}
-                                        <a href="#" onclick="deleteEmployee({{this.id}})">Delete</a>
-                                    {{/condition}}
+                                    <input type="button" class="input__button" value="Edit" onclick="edit(`/employee/{{this.id}}`)">
+                                    <input type="button" class="input__button" value="Delete" onclick="deleteEmployee({{this.id}})">
+                                    <input type="button" class="input__button" value="Send Email" onclick="sendEmail(`{{this.id}}`, `employee`)">
+                                    <input type="button" class="input__button" value="Send Whatsapp" onclick="sendWhatsApp(`{{this.id}}`, `employee`)">
                                 </td>
                             </tr>
                         {{/each}}
@@ -63,9 +64,19 @@
                             <td class="s-no">{{this.phone_number}}</td>
                             <td class="s-no">{{this.status}}</td>
                             <td class="s-no">
-                                <a href="/user/{{this.id}}">Edit</a>
                                 {{#condition ../session.role 'ROOT'}}
-                                    <a href="#" onclick="deleteUser({{this.id}})">Delete</a>
+                                    <input type="button" class="input__button" value="Edit" onclick="edit(`/user/{{this.id}}`)">
+                                    <input type="button" class="input__button" value="Delete" onclick="deleteUser({{this.id}})">
+                                    <input type="button" class="input__button" value="Send Email" onclick="sendEmail(`{{this.id}}`, `user`)">
+                                    <input type="button" class="input__button" value="Send Whatsapp" onclick="sendWhatsApp(`{{this.id}}`, `user`)">
+                                {{/condition}}
+                                {{#condition ../session.role 'EMPLOYEE'}}
+                                    <input type="button" class="input__button" value="Edit" onclick="edit(`/user/{{this.id}}`)">
+                                    <input type="button" class="input__button" value="Send Email" onclick="sendEmail(`{{this.id}}`, `user`)">
+                                    <input type="button" class="input__button" value="Send Whatsapp" onclick="sendWhatsApp(`{{this.id}}`, `user`)">
+                                {{/condition}}
+                                {{#condition ../session.role 'USER'}}
+                                    <input type="button" class="input__button" value="Edit" onclick="edit(`/user/{{this.id}}`)">
                                 {{/condition}}
                             </td>
                         </tr>
@@ -93,6 +104,7 @@
     }
 
     function deleteRecord(id, type){
+        $('.loader').show();
         $.ajax({
             url: "/delete/user",
             method: 'post',
@@ -117,4 +129,43 @@
         });
     }
     
+    function edit(data){
+        window.location.href = data
+    }
+
+    function sendWhatsApp(id, type){
+        sendMessage(id, type, "whatsapp")
+    }
+
+    function sendEmail(id, type){
+        sendMessage(id, type, "email")
+    }
+
+    function sendMessage(id, userType, messageType){
+        $('.loader').show();
+         $.ajax({
+            url: "/send/message",
+            method: 'post',
+            data: {
+                id: id,
+                userType: userType,
+                messageType: messageType
+            },
+            success: function (result) {
+                $('.loader').hide();
+                if(result.status){
+                    alert(`${messageType} Successfully sent`);
+                    location.reload()
+                }else{
+                    alert(`Error in sending ${messageType} ! Please Try Again`);
+                }
+            },
+            error: function (error){
+                $('.loader').hide();
+                console.log("error: ", error)
+                alert("Something Went Wrong! Please Try Again");
+            }
+        });
+    }
+
 </script>

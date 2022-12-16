@@ -28,6 +28,7 @@ async function sendEmail(code, email, type, id) {
     }
 }
 
+
 module.exports = {
     sendEmail: sendEmail
 }

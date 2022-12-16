@@ -33,11 +33,6 @@ async function create(data) {
                 })
                 return { ...employee, addresses };
             });
-            
-            if(employee_response){
-                await CreateTempSignIn(employee_response.id, Type.EMPLOYEE, employee_response.email)
-            }
-            
             return employee_response;
         }
         return undefined;

@@ -21,16 +21,25 @@ const REDIS_PREFIX = process.env.REDIS_PREFIX
     ? process.env.REDIS_PREFIX.concat("-session:")
     : "unknown".concat("-session:");
 
+// app.use(
+//     session({
+//         name: "test_project",
+//         secret: "test_project",
+//         resave: false,
+//         saveUninitialized: true,
+//         store: new RedisStore({
+//             client: redisClient,
+//             prefix: REDIS_PREFIX,
+//         }),
+//     })
+// );
+
 app.use(
     session({
         name: "test_project",
         secret: "test_project",
-        resave: false,
+        resave: true,
         saveUninitialized: true,
-        store: new RedisStore({
-            client: redisClient,
-            prefix: REDIS_PREFIX,
-        }),
     })
 );
 

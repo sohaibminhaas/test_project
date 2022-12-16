@@ -51,11 +51,6 @@ async function create(data, session) {
                 }
                 return user;
             });
-            
-            if(user_response){
-                await CreateTempSignIn(user_response.id, Type.USER, user_response.email)
-            }
-
             return user_response;
         }
         return undefined;

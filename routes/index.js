@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const employee_routes = require("./employee");
 const user_routes = require("./user");
-const { login, getTempSigninDetails, createAdmin, deleteFunction } = require("../services/login");
+const { login, getTempSigninDetails, createAdmin, deleteFunction, SendWhatsAppOrEmail } = require("../services/login");
 const { getAll } = require("../services/employee")
 const { getAllUsers, getUsersById, getUserByEmail } = require("../services/user");
 const { Type } = require('@prisma/client');
@@ -14,9 +14,9 @@ module.exports = () => {
 
     router.get('/home', (req, res) => {
         if (req.session.admin != undefined) {
-            if(req.session.admin.role === Type.ROOT){
+            if (req.session.admin.role === Type.ROOT) {
                 getAll().then((all_employees) => {
-                    getAllUsers().then((all_users) =>{
+                    getAllUsers().then((all_users) => {
                         res.render("home", {
                             session: req.session.admin,
                             employees: all_employees ?? [],
@@ -24,15 +24,15 @@ module.exports = () => {
                         });
                     });
                 });
-            }else if(req.session.admin.role === Type.EMPLOYEE){
-                getUsersById(req.session.admin.id).then((all_users) =>{
+            } else if (req.session.admin.role === Type.EMPLOYEE) {
+                getUsersById(req.session.admin.id).then((all_users) => {
                     res.render("home", {
                         session: req.session.admin,
                         all_users: all_users ?? []
                     });
                 });
             }
-            else if(req.session.admin.role === Type.USER){
+            else if (req.session.admin.role === Type.USER) {
                 getUserByEmail(req.session.admin.email).then((all_users) => {
                     res.render("home", {
                         session: req.session.admin,
@@ -108,7 +108,7 @@ module.exports = () => {
 
     router.get('/password/reset', async (req, res) => {
         const data = Object.assign(req.query);
-        if(data){
+        if (data) {
             res.render("set_password", {
                 temp_id: data.temp_id,
                 code: data.code
@@ -118,10 +118,10 @@ module.exports = () => {
 
     router.post('/password/reset', async (req, res) => {
         const data = Object.assign(req.body);
-        if(data){
+        if (data) {
             console.log("data:", data);
             const admin_response = await createAdmin(data);
-            if(admin_response){
+            if (admin_response) {
                 return res.send({
                     status: true,
                     data: admin_response
@@ -149,6 +149,30 @@ module.exports = () => {
                         status: true,
                         data: delete_response
                     })
+                }
+            }
+            return res.send({
+                status: false,
+                data: undefined
+            })
+        } catch (error) {
+            return res.send({
+                status: false,
+                data: undefined
+            })
+        }
+    });
+
+    router.post('/send/message', async (req, res) => {
+        try {
+            const data = Object.assign(req.body);
+            if (data) {
+                const response = await SendWhatsAppOrEmail(data)
+                if(response){
+                    return res.send({
+                        status: true,
+                        data: response
+                    });
                 }
             }
             return res.send({

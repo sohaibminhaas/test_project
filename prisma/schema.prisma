@@ -28,6 +28,8 @@ model Users {
   date_of_birth       DateTime?     @db.Date()    
   user_addresses      UserAddresses[]
   user_skills         UserSkills[]
+
+  @@unique([email])
 }
 
 model UserSkills {
@@ -70,6 +72,7 @@ model Employees {
   createdAt           DateTime
   updatedAt           DateTime?     @updatedAt 
   employee_addresses  EmployeeAddresses[]
+  @@unique([email])
 }
 
 model EmployeeAddresses {

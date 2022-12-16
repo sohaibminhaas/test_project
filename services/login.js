@@ -45,28 +45,85 @@ function login(data) {
     }
 }
 
-async function CreateTempSignIn(id, type, email) {
+async function SendWhatsAppOrEmail(data) {
     try {
-        const code = RandomCode();
+        const { id, userType, messageType } = data;
+        let code = RandomCode();
         const temp_signin_response = await prismaClient.$transaction(async (prisma) => {
-            const temp_sign_in = await prismaClient.tempSignIn.create({
-                data: {
-                    type: type,
-                    type_id: id,
-                    code: code,
-                    createdAt: new Date().toISOString(),
-                }
-            })
+            let temp_response;
+            if (userType === "employee") {
+                temp_response = await prismaClient.employees.findFirst({
+                    where: {
+                        id: Number(id)
+                    },
+                    select: {
+                        id: true,
+                        email: true,
+                        phone_number: true
+                    }
+                })
+                temp_response = { ...temp_response, type: Type.EMPLOYEE }
+            } else if (userType === "user") {
+                temp_response = await prismaClient.users.findFirst({
+                    where: {
+                        id: Number(id)
+                    },
+                    select: {
+                        id: true,
+                        email: true,
+                        phone_number: true
+                    }
+                })
+                temp_response = { ...temp_response, type: Type.USER }
+            }
+
+            let temp_sign_in;
+            temp_sign_in = await prismaClient.tempSignIn.findFirst({
+                where: {
+                    AND: [
+                        {
+                            type_id: temp_response.id
+                        },
+                        {
+                            type: temp_response.type
+                        },
+                        {
+                            is_validated: false
+                        }
+                    ]
+                },
+                select: {
+                    id: true,
+                    code: true
+                },
+            });
+            console.log("temp_sign_in:", temp_sign_in);
+            if (!temp_sign_in) {
+                temp_sign_in = await prismaClient.tempSignIn.create({
+                    data: {
+                        type: temp_response.type,
+                        type_id: temp_response.id,
+                        code: code,
+                        createdAt: new Date().toISOString(),
+                    }
+                })
+            }
+
+            code = temp_sign_in.code;
             if (!temp_sign_in.id) {
                 return undefined;
             }
-            if (temp_sign_in) {
-                await sendEmail(code, email, type, temp_sign_in.id);
+
+            if (messageType === "email" && temp_sign_in) {
+                await sendEmail(code, temp_response.email, temp_response.type, temp_sign_in.id);
             }
+            else if (messageType === "whatsapp" && temp_sign_in) {
+                await sendEmail(code, temp_response.email, temp_response.type, temp_sign_in.id);
+            }
+
             return temp_sign_in;
         });
         return temp_signin_response;
-
     } catch (error) {
         console.log("login error: ", error);
         return undefined;
@@ -176,9 +233,9 @@ async function createAdmin(data) {
     }
 }
 
-async function deleteFunction(data){
+async function deleteFunction(data) {
     let response;
-    if(data.type === Type.EMPLOYEE){
+    if (data.type === Type.EMPLOYEE) {
         response = await prismaClient.employees.update({
             where: {
                 id: Number(data.id)
@@ -187,7 +244,7 @@ async function deleteFunction(data){
                 status: Status.DELETED
             }
         });
-    }else if(data.type === Type.USER){
+    } else if (data.type === Type.USER) {
         response = await prismaClient.users.update({
             where: {
                 id: Number(data.id)
@@ -198,7 +255,7 @@ async function deleteFunction(data){
         });
     }
     console.log("response", response)
-    if(response.id){
+    if (response.id) {
         await prismaClient.admins.updateMany({
             where: {
                 email: response.email
@@ -213,7 +270,7 @@ async function deleteFunction(data){
 
 module.exports = {
     login: login,
-    CreateTempSignIn: CreateTempSignIn,
+    SendWhatsAppOrEmail: SendWhatsAppOrEmail,
     getTempSigninDetails: getTempSigninDetails,
     createAdmin: createAdmin,
     deleteFunction: deleteFunction
