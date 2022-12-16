@@ -24,7 +24,6 @@ async function create(data, session) {
                         date_of_birth: new Date(data.date_of_birth).toISOString()
                     }
                 })
-                console.log("user:", user)
                 if (!user.id) {
                     return undefined;
                 }
@@ -69,6 +68,7 @@ async function create(data, session) {
 async function update(data) {
     try {
         if (data) {
+            console.log("data:", data)
             const user_response = await prismaClient.$transaction(async (prisma) => {
                 await prismaClient.userSkills.deleteMany({
                     where:{

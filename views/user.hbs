@@ -35,8 +35,8 @@
                         </select>
                     </div>
                     <div class="legend__styled">
-                        <label for="id__type"><b>ID Type</b></label>
-                        <select name="id__type" id="id__type" required>
+                        <label for="id_type"><b>ID Type</b></label>
+                        <select name="id_type" id="id_type" required>
                             <option value="idcard" {{#condition user.identity_type 'ID_CARD'}} selected {{/condition}}>ID Card</option>
                             <option value="passport" {{#condition user.identity_type 'PASSPORT'}} selected {{/condition}}>Passport</option>
                         </select>

@@ -66,16 +66,19 @@ module.exports = () => {
                 const data = Object.assign(req.body);
                 if (data) {
                     const user_response = await update(data);
+                    console.log("user_response==", user_response)
                     if (user_response) {
                         return res.send({
                             status: true,
-                            data: user_response
+                            data: user_response,
+                            message: "success"
                         })
                     }
                 }
                 return res.send({
                     status: false,
-                    data: undefined
+                    data: undefined,
+                    message: "No data found"
                 })
             } else {
                 res.redirect('/');
@@ -83,7 +86,8 @@ module.exports = () => {
         } catch (error) {
             return res.send({
                 status: false,
-                data: undefined
+                data: undefined,
+                message: "some thing went wrong"
             })
         }
     });
