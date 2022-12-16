@@ -105,13 +105,13 @@
                     if(result.status){
                         window.location.href = "/home";
                     }else{
-                        alert("Invalid Email/Password");
+                        alert("Error in Updating New User! Please Try Again");
                     }
                 },
                 error: function (error){
                     $('.loader').hide();
                     console.log("error: ", error)
-                    alert("Invalid Email/Password");
+                    alert("Something Went Wrong! Please Try Again");
                 }
             });
         }

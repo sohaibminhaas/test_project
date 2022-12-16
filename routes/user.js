@@ -36,7 +36,6 @@ module.exports = () => {
         try {
             if (req.session.admin) {
                 const data = Object.assign(req.body);
-                console.log("data:", data)
                 if (data) {
                     const user_response = await create(data, req.session.admin);
                     if (user_response) {
@@ -67,7 +66,6 @@ module.exports = () => {
                 const data = Object.assign(req.body);
                 if (data) {
                     const user_response = await update(data);
-                    console.log("user_response: ", user_response)
                     if (user_response) {
                         return res.send({
                             status: true,

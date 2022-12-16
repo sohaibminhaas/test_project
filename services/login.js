@@ -149,6 +149,7 @@ async function createAdmin(data) {
                     password: passwordToHash(data.password),
                     role: temp_sign_in_response.type === Type.EMPLOYEE ? Type.EMPLOYEE : Type.USER,
                     createdAt: new Date().toISOString(),
+                    status: Status.ACTIVE
                 }
             });
 
