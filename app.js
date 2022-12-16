@@ -11,11 +11,7 @@ const session = require("express-session");
 
 app.use(
     session({
-        name: "codeil",
         secret: "test_project",
-        resave: false,
-        saveUninitialized: true,
-        proxy: true,
     })
 );
 
